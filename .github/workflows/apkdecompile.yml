@@ -1,5 +1,6 @@
 name: "APK反编译并推送源码"
 
+
 on:
   workflow_dispatch:
     inputs:
@@ -14,6 +15,7 @@ on:
         description: '若目标仓库不存在是否自动创建（true/false）'
         required: false
         default: 'true'
+
 
 jobs:
   decompile:
@@ -112,6 +114,9 @@ jobs:
 
           # 初始化并推送
           cd output
+          # 删除超过99MB的大文件（GitHub限制单文件100MB）
+          find . -type f -size +99M -delete
+          echo "✅已清理超大文件"
           git init
           git config user.name "$GIT_USER_NAME"
           git config user.email "$GIT_USER_EMAIL"
