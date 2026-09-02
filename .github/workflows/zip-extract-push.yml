@@ -27,7 +27,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: zip-extract-${{ github.event.inputs.target_repo }}
+  group: zip-extract-${{ inputs.target_repo }}
   cancel-in-progress: false
 
 jobs:
@@ -55,7 +55,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "⬇️正在下载 Zip..."
-          wget -q -O archive.zip "${{ github.event.inputs.zip_url }}" || {
+          wget -q -O archive.zip "${{ inputs.zip_url }}" || {
             echo "::error::下载失败，请检查链接是否可直接访问"
             exit 1
           }
@@ -97,7 +97,7 @@ jobs:
           set -euo pipefail
           FULL_NAME="${{ steps.repo.outputs.full_name }}"
           EXTRACT_DIR="${{ steps.extract.outputs.extract_dir }}"
-          BRANCH="${{ github.event.inputs.branch_path }}"
+          BRANCH="${{ inputs.branch }}"
           BRANCH="${BRANCH:-main}"
 
           # 确认/创建目标仓库
@@ -163,8 +163,8 @@ jobs:
             echo "🏷️Tag：$VERSION"
           fi
         env:
-          VERSION: ${{ github.event.inputs.version }}
-          CREATE_REPO: ${{ github.event.inputs.create_repo }}
+          VERSION: ${{ inputs.version }}
+          CREATE_REPO: ${{ inputs.create_repo }}
 
       - name: 清理临时文件
         if: always()
